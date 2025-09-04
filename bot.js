@@ -47,8 +47,7 @@ const PLANTS_MENU = {
     '3': { name: 'Rice', key: 'rice' },
     '4': { name: 'Tea', key: 'tea' },
     '5': { name: 'Tomato', key: 'tomato' },
-    '6': { name: 'Mango', key: 'mango' },
-    '7': { name: 'Potato', key: 'potato' },
+    '6': { name: 'Potato', key: 'potato' },
 };
 
 const getMenuText = () => {
@@ -101,7 +100,8 @@ async function handleIncomingMessage(msg) {
                     const confidencePercent = (confidence ? (confidence * 100).toFixed(2) : 'N/A');
                     console.log(`💡 Prediction: ${prediction} (${confidencePercent}%)`);
 
-                    const replyText = `Predicted Disease: ${prediction}\nConfidence: ${confidencePercent}%`;
+                    const replyText = `Predicted Disease: ${prediction}`;
+                    // const replyText = `Predicted Disease: ${prediction}\nConfidence: ${confidencePercent}%`;
                     await client.sendMessage(user, replyText);
                     delete userStates[user];
 

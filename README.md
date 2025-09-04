@@ -1,10 +1,10 @@
 # WhatsApp Plant Disease Detection Bot
 
-A WhatsApp bot that uses AI models to detect diseases in various plants including Corn, Cotton, Rice, Tea, Tomato, Mango, and Potato.
+A WhatsApp bot that uses AI models to detect diseases in various plants including Corn, Cotton, Rice, Tea, Tomato and Potato.
 
 ## Features
 
-- **Multi-Plant Support**: Detects diseases in 7 different plant types
+- **Multi-Plant Support**: Detects diseases in 6 different plant types
 - **WhatsApp Integration**: Easy-to-use bot interface via WhatsApp
 - **AI-Powered**: Uses fine-tuned DenseNet models for accurate disease detection
 - **Real-time Analysis**: Instant disease prediction with confidence scores
@@ -18,7 +18,6 @@ A WhatsApp bot that uses AI models to detect diseases in various plants includin
 | **Rice** | Bacterial Leaf Blight, Brown Spot, Healthy, Leaf Blast, Leaf Scald, Narrow Brown Spot |
 | **Tea** | Algal Spot, Brown Blight, Gray Blight, Healthy, Helopeltis, Red Spot |
 | **Tomato** | Mosaic Virus, Target Spot, Bacterial Spot, Yellow Leaf Curl Virus, Late Blight, Leaf Mold, Early Blight, Spider Mites, Healthy, Septoria Leaf Spot |
-| **Mango** | Anthracnose, Bacterial Canker, Cutting Weevil, Die Back, Gall Midge, Powdery Mildew, Sooty Mould |
 | **Potato** | Early Blight, Late Blight, Healthy |
 
 ## Prerequisites
@@ -31,11 +30,11 @@ A WhatsApp bot that uses AI models to detect diseases in various plants includin
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
-cd whatsapp-cotton-bot
+git clone https://github.com/Likhan007/Defense-WhatsApp-Disease-Detection-Bot.git
+cd Defense-WhatsApp-Disease-Detection-Bot
 ```
 
-### Step 2: Set Up Python Environment
+### Step 2: Set Up Python Environment (Not mandatory if you don't mind installing package in you desktop environment)
 ```bash
 # Create virtual environment
 python -m venv .venv
@@ -96,7 +95,7 @@ whatsapp-cotton-bot/
 ├── requirements.txt                # Python dependencies
 ├── package.json                    # Node.js dependencies
 ├── README.md                       # This file
-├── *.h5                           # AI model files (7 plant models)
+├── *.h5                           # AI model files (6 plant models)
 └── SOME TEST IMAGES/              # Sample test images
 ```
 
@@ -118,7 +117,7 @@ whatsapp-cotton-bot/
 ### Error Messages
 
 - **"Model not loaded"**: Restart the Flask server
-- **"Invalid plant_type"**: Use one of: corn, cotton, rice, tea, tomato, mango, potato
+- **"Invalid plant_type"**: Use one of: corn, cotton, rice, tea, tomato, potato
 - **"Failed to process image"**: Ensure the image is clear and in a supported format
 
 ## Dependencies

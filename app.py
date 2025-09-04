@@ -38,11 +38,6 @@ PLANT_MODELS = {
         'classes': ['Tomato_mosaic_virus', 'Target_Spot', 'Bacterial_spot', 'Tomato_Yellow_Leaf_Curl_Virus', 'Late_blight', 'Leaf_Mold', 'Early_blight', 'Spider_mites Two-spotted_spider_mite', 'Tomato___healthy', 'Septoria_leaf_spot'],
         'model_obj': None
     },
-    'mango': {
-        'model_path': 'mango_densenet_finetuned_model.h5',
-        'classes': ['Anthracnose', 'Bacterial Canker', 'Cutting Weevil', 'Die Back', 'Gall Midge', 'Powdery Mildew', 'Sooty Mould'],
-        'model_obj': None
-    },
     'potato': {
         'model_path': 'potato_densenet_finetuned_model.h5',
         'classes': ['Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy'],
