@@ -55,7 +55,7 @@ const getMenuText = () => {
     for (const key in PLANTS_MENU) {
         menu += `${key}. ${PLANTS_MENU[key].name}\n`;
     }
-    menu += "\nType a number to begin.";
+    menu += "\nType a number to begin.\n\nTip: Send the leaf photo as an image or as a document (jpg/jpeg/png). Sending as a document preserves original quality.";
     return menu;
 };
 
@@ -70,6 +70,23 @@ client.on('ready', () => {
     console.log('Send "hi" or "menu" to start a conversation.');
 });
 
+// --- MEDIA HELPERS ---
+function isSupportedImageMessage(msg) {
+    if (!msg || !msg.hasMedia) return false;
+    const type = msg.type || '';
+    const raw = (msg._data || {});
+    const mimetype = (raw.mimetype || msg.mimetype || '').toLowerCase();
+    const filename = (raw.filename || msg.filename || '').toLowerCase();
+
+    const isNativeImage = type === 'image';
+    const isDocumentImage = type === 'document' && (
+        (mimetype.startsWith('image/')) ||
+        /\.(jpe?g|png)$/.test(filename)
+    );
+
+    return isNativeImage || isDocumentImage;
+}
+
 // move message handling into a reusable function so we can use it for both 'message' and 'message_create'
 async function handleIncomingMessage(msg) {
     try {
@@ -80,10 +97,10 @@ async function handleIncomingMessage(msg) {
         const userMessage = bodyText.trim().toLowerCase();
         const currentState = userStates[user];
 
-        // --- 1. Handling Image Input ---
-        if (msg.hasMedia && msg.type === 'image') {
+        // --- 1. Handling Image Input (image or image-as-document) ---
+        if (msg.hasMedia && isSupportedImageMessage(msg)) {
             if (currentState && currentState.stage === 'awaiting_image') {
-                console.log(`📸 Image received for ${currentState.plant} from ${user}`);
+                console.log(`📸 Image received (type: ${msg.type}) for ${currentState.plant} from ${user}`);
                 msg.reply(`Analyzing your *${PLANTS_MENU[currentState.number].name}* image, please wait...`);
 
                 try {
@@ -127,7 +144,7 @@ async function handleIncomingMessage(msg) {
             const choice = PLANTS_MENU[userMessage];
             if (choice) {
                 userStates[user] = { stage: 'awaiting_image', plant: choice.key, number: userMessage };
-                await client.sendMessage(user, `Great! You've selected *${choice.name}*. Please send me a clear image of the plant leaf.`);
+                await client.sendMessage(user, `Great! You've selected *${choice.name}*. Please send me a clear image of the plant leaf. You can send it as a regular image or as a document (jpg/jpeg/png) to preserve quality.`);
             } else {
                 await client.sendMessage(user, 'Invalid selection. Please reply with just a number from the menu (e.g., "5" for Tomato).');
             }
