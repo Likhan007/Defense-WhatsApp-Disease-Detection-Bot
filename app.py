@@ -16,31 +16,37 @@ PLANT_MODELS = {
     'corn': {
         'model_path': 'corn_densenet_finetuned_model.h5',
         'classes': ['Common Rust', 'Gray Leaf Spot', 'Blight', 'Healthy'],
+        'bengali_names': ['সাধারণ মরিচা (Common Rust)', 'ধূসর পাতার দাগ (Gray Leaf Spot)', 'অগ্নিদাহ (Blight)', 'সুস্থ (Healthy)'],
         'model_obj': None # This will hold the loaded model object
     },
     'cotton': {
         'model_path': 'cotton_densenet_finetuned_model.h5',
         'classes': ['bacterial_blight', 'curl_virus', 'fussarium_wilt', 'healthy'],
+        'bengali_names': ['ব্যাকটেরিয়াল ব্লাইট (Bacterial Blight)', 'কার্ল ভাইরাস (Curl Virus)', 'ফুসারিয়াম উইল্ট (Fusarium Wilt)', 'সুস্থ (Healthy)'],
         'model_obj': None
     },
     'rice': {
         'model_path': 'rice_densenet_finetuned_model.h5',
         'classes': ['bacterial Leaf Blight', 'brown Spot', 'healthy', 'leaf Blast', 'leaf Scald', 'narrow Brown Spot'],
+        'bengali_names': ['ব্যাকটেরিয়াল পাতার ব্লাইট (Bacterial Leaf Blight)', 'বাদামী দাগ (Brown Spot)', 'সুস্থ (Healthy)', 'পাতার বিস্ফোরণ (Leaf Blast)', 'পাতার স্কাল্ড (Leaf Scald)', 'সংকীর্ণ বাদামী দাগ (Narrow Brown Spot)'],
         'model_obj': None
     },
     'tea': {
         'model_path': 'tea_densenet_finetuned_model.h5',
         'classes': ['algal_spot', 'brown_blight', 'gray_blight', 'healthy', 'helopeltis', 'red_spot'],
+        'bengali_names': ['শৈবাল দাগ (Algal Spot)', 'বাদামী ব্লাইট (Brown Blight)', 'ধূসর ব্লাইট (Gray Blight)', 'সুস্থ (Healthy)', 'হেলোপেল্টিস (Helopeltis)', 'লাল দাগ (Red Spot)'],
         'model_obj': None
     },
     'tomato': {
         'model_path': 'tomato_densenet_finetuned_model.h5',
         'classes': ['Tomato_mosaic_virus', 'Target_Spot', 'Bacterial_spot', 'Tomato_Yellow_Leaf_Curl_Virus', 'Late_blight', 'Leaf_Mold', 'Early_blight', 'Spider_mites Two-spotted_spider_mite', 'Tomato___healthy', 'Septoria_leaf_spot'],
+        'bengali_names': ['টমেটো মোজাইক ভাইরাস (Tomato Mosaic Virus)', 'টার্গেট স্পট (Target Spot)', 'ব্যাকটেরিয়াল স্পট (Bacterial Spot)', 'টমেটো হলুদ পাতা কার্ল ভাইরাস (Tomato Yellow Leaf Curl Virus)', 'লেট ব্লাইট (Late Blight)', 'লিফ মোল্ড (Leaf Mold)', 'আর্লি ব্লাইট (Early Blight)', 'মাকড়সা মাইট (Spider Mites)', 'সুস্থ টমেটো (Healthy Tomato)', 'সেপ্টোরিয়া পাতার দাগ (Septoria Leaf Spot)'],
         'model_obj': None
     },
     'potato': {
         'model_path': 'potato_densenet_finetuned_model.h5',
         'classes': ['Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy'],
+        'bengali_names': ['আলুর প্রাথমিক ব্লাইট (Potato Early Blight)', 'আলুর শেষ ব্লাইট (Potato Late Blight)', 'সুস্থ আলু (Healthy Potato)'],
         'model_obj': None
     }
 }
@@ -100,6 +106,7 @@ def predict():
     model_info = PLANT_MODELS[plant_type]
     model = model_info['model_obj']
     class_names = model_info['classes']
+    bengali_names = model_info['bengali_names']
 
     if model is None:
         return jsonify({'error': f'Model for {plant_type} is not loaded'}), 500
@@ -112,12 +119,13 @@ def predict():
         
         predicted_index = np.argmax(prediction[0])
         predicted_class = class_names[predicted_index]
+        predicted_bengali = bengali_names[predicted_index]
         confidence = float(np.max(prediction[0]))
 
         print(f"Prediction for {plant_type}: {predicted_class} with confidence {confidence:.2f}")
         
         return jsonify({
-            'prediction': predicted_class,
+            'prediction': predicted_bengali,
             'confidence': confidence
         })
 

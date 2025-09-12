@@ -42,20 +42,29 @@ const userStates = {};
 
 // --- BOT CONFIGURATION ---
 const PLANTS_MENU = {
-    '1': { name: 'Corn', key: 'corn' },
-    '2': { name: 'Cotton', key: 'cotton' },
-    '3': { name: 'Rice', key: 'rice' },
-    '4': { name: 'Tea', key: 'tea' },
-    '5': { name: 'Tomato', key: 'tomato' },
-    '6': { name: 'Potato', key: 'potato' },
+    '1': { name: 'ভুট্টা (Corn)', key: 'corn' },
+    '2': { name: 'তুলা (Cotton)', key: 'cotton' },
+    '3': { name: 'ধান (Rice)', key: 'rice' },
+    '4': { name: 'চা (Tea)', key: 'tea' },
+    '5': { name: 'টমেটো (Tomato)', key: 'tomato' },
+    '6': { name: 'আলু (Potato)', key: 'potato' },
+    // Bengali digits support
+    '১': { name: 'ভুট্টা (Corn)', key: 'corn' },
+    '২': { name: 'তুলা (Cotton)', key: 'cotton' },
+    '৩': { name: 'ধান (Rice)', key: 'rice' },
+    '৪': { name: 'চা (Tea)', key: 'tea' },
+    '৫': { name: 'টমেটো (Tomato)', key: 'tomato' },
+    '৬': { name: 'আলু (Potato)', key: 'potato' },
 };
 
 const getMenuText = () => {
-    let menu = "Welcome! I can predict diseases for the following plants. Please reply with the number of the plant you want to check:\n\n";
+    let menu = "স্বাগতম! আমি নিম্নলিখিত গাছের রোগ নির্ণয় করতে পারি। অনুগ্রহ করে যে গাছটি পরীক্ষা করতে চান তার নম্বর লিখুন:\n\n";
     for (const key in PLANTS_MENU) {
-        menu += `${key}. ${PLANTS_MENU[key].name}\n`;
+        if (key <= '6') { // Only show English digits to avoid duplication
+            menu += `${key}. ${PLANTS_MENU[key].name}\n`;
+        }
     }
-    menu += "\nType a number to begin.\n\nTip: Send the leaf photo as an image or as a document (jpg/jpeg/png). Sending as a document preserves original quality.";
+    menu += "\nশুরু করতে একটি নম্বর টাইপ করুন।\n\nটিপ: পাতার ছবি একটি ছবি বা ডকুমেন্ট (jpg/jpeg/png) হিসাবে পাঠান। ডকুমেন্ট হিসাবে পাঠালে মূল গুণমান সংরক্ষিত থাকে।";
     return menu;
 };
 
@@ -67,7 +76,7 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('✅ WhatsApp client is ready!');
-    console.log('Send "hi" or "menu" to start a conversation.');
+    console.log('Send "hi", "হাই", "menu", or "মেনু" to start a conversation.');
 });
 
 // --- MEDIA HELPERS ---
@@ -101,7 +110,7 @@ async function handleIncomingMessage(msg) {
         if (msg.hasMedia && isSupportedImageMessage(msg)) {
             if (currentState && currentState.stage === 'awaiting_image') {
                 console.log(`📸 Image received (type: ${msg.type}) for ${currentState.plant} from ${user}`);
-                msg.reply(`Analyzing your *${PLANTS_MENU[currentState.number].name}* image, please wait...`);
+                msg.reply(`আপনার *${PLANTS_MENU[currentState.number].name}* ছবি বিশ্লেষণ করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...`);
 
                 try {
                     const media = await msg.downloadMedia();
@@ -117,24 +126,26 @@ async function handleIncomingMessage(msg) {
                     const confidencePercent = (confidence ? (confidence * 100).toFixed(2) : 'N/A');
                     console.log(`💡 Prediction: ${prediction} (${confidencePercent}%)`);
 
-                    const replyText = `Predicted Disease: ${prediction}`;
+                    const replyText = `পূর্বাভাসিত রোগ: ${prediction}`;
                     // const replyText = `Predicted Disease: ${prediction}\nConfidence: ${confidencePercent}%`;
                     await client.sendMessage(user, replyText);
                     delete userStates[user];
 
                 } catch (error) {
                     console.error('❌ Error processing image:', error.response ? error.response.data : error.message);
-                    msg.reply('Sorry, something went wrong while processing your image. Please type "menu" to start over.');
+                    msg.reply('দুঃখিত, আপনার ছবি প্রক্রিয়াকরণে কিছু সমস্যা হয়েছে। আবার শুরু করতে "মেনু" টাইপ করুন।');
                     delete userStates[user];
                 }
             } else {
-                msg.reply('I was not expecting an image. Please type "menu" to start the process.');
+                msg.reply('আমি একটি ছবি আশা করছিলাম না। প্রক্রিয়া শুরু করতে "মেনু" টাইপ করুন।');
             }
             return;
         }
 
         // --- 2. Handling Text Input ---
-        if (['hi', 'hello', 'menu', 'start'].includes(userMessage)) {
+        // Support both English and Bengali greetings
+        const greetings = ['hi', 'hello', 'menu', 'start', 'হাই', 'হ্যালো', 'মেনু', 'শুরু', 'নমস্কার', 'আদাব'];
+        if (greetings.includes(userMessage)) {
             userStates[user] = { stage: 'awaiting_plant_choice' };
             await client.sendMessage(user, getMenuText());
             return;
@@ -144,9 +155,9 @@ async function handleIncomingMessage(msg) {
             const choice = PLANTS_MENU[userMessage];
             if (choice) {
                 userStates[user] = { stage: 'awaiting_image', plant: choice.key, number: userMessage };
-                await client.sendMessage(user, `Great! You've selected *${choice.name}*. Please send me a clear image of the plant leaf. You can send it as a regular image or as a document (jpg/jpeg/png) to preserve quality.`);
+                await client.sendMessage(user, `দুর্দান্ত! আপনি *${choice.name}* নির্বাচন করেছেন। অনুগ্রহ করে গাছের পাতার একটি পরিষ্কার ছবি পাঠান। আপনি এটি একটি সাধারণ ছবি বা ডকুমেন্ট (jpg/jpeg/png) হিসাবে পাঠাতে পারেন গুণমান সংরক্ষণের জন্য।`);
             } else {
-                await client.sendMessage(user, 'Invalid selection. Please reply with just a number from the menu (e.g., "5" for Tomato).');
+                await client.sendMessage(user, 'ভুল নির্বাচন। অনুগ্রহ করে মেনু থেকে শুধুমাত্র একটি নম্বর লিখুন (যেমন, টমেটোর জন্য "৫" বা "5")।');
             }
             return;
         }
